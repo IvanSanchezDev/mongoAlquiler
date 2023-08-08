@@ -1,0 +1,340 @@
+use('db_alquiler_campus')
+
+db.createCollection('sucursal', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      title: 'sucursal object validation',
+      required: ['nombre', 'direccion', 'telefono'],
+      properties: {
+        nombre: {
+          bsonType: 'string',
+          description: 'nombre de la sucursal debe ser obligatoria y de tipo string'
+        },
+        direccion: {
+          bsonType: 'object',
+          required: ['ciudad'],
+          properties: {
+            calle: {
+              bsonType: 'string',
+              description: 'debe ser una cadena de texto si el campo existe'
+            },
+            ciudad: {
+              bsonType: 'string',
+              description: 'debe ser una cadena de texto y es requerido'
+            }
+          }
+        },
+        telefono: {
+          bsonType: 'number',
+          description: 'telefono al cual comunicarse es requerido y debe ser de  tipo number'
+        }
+      }
+    }
+  }
+})
+
+use('db_alquiler_campus')
+db.createCollection('automovil', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      title: 'automovil object validation',
+      required: ['marca', 'modelo', 'anio', 'tipo', 'capacidad', 'precio_diario'],
+      properties: {
+        marca: {
+          bsonType: 'string',
+          description: 'la marca es obligatoria y de tipo string'
+        },
+        modelo: {
+          bsonType: 'string',
+          description: 'el modelo del auto es obligatorio y de tipo string'
+        },
+        anio: {
+          bsonType: 'number',
+          description: 'el año es obligatorio y de tipo entero'
+        },
+        tipo: {
+          bsonType: 'string',
+          description: 'el tipo es obligatorio para clasificarlos y de tipo string'
+        },
+        capacidad: {
+          bsonType: 'int',
+          description: 'la capacidad es obligatoria y debe ser un entero'
+        },
+        precio_diario: {
+          bsonType: 'double',
+          description: 'el precio diario es requerido para poder alquilarlo y de tipo number'
+        }
+
+      }
+
+    }
+  }
+})
+
+use('db_alquiler_campus')
+db.createCollection('sucursal_automovil', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      title: 'sucursal_automovil object validation',
+      required: ['id_sucursal', 'id_automovil', 'cantidad_disponible'],
+      properties: {
+        idSucursal: {
+          bsonType: 'objectId',
+          description: 'ID de la sucursal debe ser un ObjectId y es obligatorio'
+        },
+        id_automovil: {
+          bsonType: 'objectId',
+          description: 'ID del automóvil debe ser un ObjectId y es obligatorio'
+        },
+        cantidad_disponible: {
+          bsonType: 'int',
+          description: 'la cantidad disponible es obligatoria y de tipo entero'
+        }
+      }
+    }
+  }
+})
+
+use('db_alquiler_campus')
+db.createCollection('cliente', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      title: 'cliente object validation',
+      required: ['nombre', 'apellido', 'dni', 'direccion', 'telefono', 'email'],
+      properties: {
+        nombre: {
+          bsonType: 'string',
+          description: 'nombre del cliente debe ser obligatoria y de tipo string'
+        },
+        apellido: {
+          bsonType: 'string',
+          description: 'apellido del cliente debe ser obligatoria y de tipo string'
+        },
+        dni: {
+          bsonType: 'number',
+          description: 'el dni del cliente debe ser obligatorio y de tipo number'
+        },
+        direccion: {
+          bsonType: 'object',
+          required: ['ciudad'],
+          properties: {
+            calle: {
+              bsonType: 'string',
+              description: 'debe ser una cadena de texto si el campo existe'
+            },
+            ciudad: {
+              bsonType: 'string',
+              description: 'debe ser una cadena de texto y es requerido'
+            }
+          }
+        },
+        telefono: {
+          bsonType: 'number',
+          description: 'telefono al cual comunicarse es requerido y debe ser de  tipo number'
+        },
+        email: {
+          bsonType: 'string',
+          pattern: '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$',
+          description: 'el email es requerido como segunda forma de comunicacion y debe ser valido'
+
+        }
+      }
+    }
+  }
+})
+
+use('db_alquiler_campus')
+db.createCollection('alquiler', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      title: 'alquiler object validation',
+      required: ['fecha_inicio', 'fecha_fin', 'costo_total', 'estado', 'id_cliente', 'id_automovil'],
+      properties: {
+        fecha_inicio: {
+          bsonType: 'date',
+          description: 'Fecha de inicio debe ser una fecha válida y es obligatoria'
+        },
+        fecha_fin: {
+          bsonType: 'date',
+          description: 'Fecha de fin debe ser una fecha válida y es obligatoria'
+        },
+        costo_total: {
+          bsonType: 'int',
+          description: 'Costo total debe ser un número de punto flotante y es obligatorio'
+        },
+        estado: {
+          bsonType: 'string',
+          description: 'Estado del alquiler debe ser string y es obligatorio'
+        },
+        id_cliente: {
+          bsonType: 'objectId',
+          description: 'ID del cliente debe ser un ObjectId y es obligatorio'
+        },
+        id_automovil: {
+          bsonType: 'objectId',
+          description: 'ID del automóvil debe ser un ObjectId y es obligatorio'
+        }
+      }
+    }
+  }
+})
+
+use('db_alquiler_campus')
+db.createCollection('empleado', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      title: 'empleado object validation',
+      required: ['nombre', 'apellido', 'dni', 'direccion', 'telefono', 'cargo'],
+      properties: {
+        nombre: {
+          bsonType: 'string',
+          description: 'nombre del empleado debe ser obligatoria y de tipo string'
+        },
+        apellido: {
+          bsonType: 'string',
+          description: 'apellido del empleado debe ser obligatoria y de tipo string'
+        },
+        dni: {
+          bsonType: 'number',
+          description: 'el dni del empleado debe ser obligatorio y de tipo number'
+        },
+        direccion: {
+          bsonType: 'object',
+          required: ['ciudad'],
+          properties: {
+            calle: {
+              bsonType: 'string',
+              description: 'debe ser una cadena de texto si el campo existe'
+            },
+            ciudad: {
+              bsonType: 'string',
+              description: 'debe ser una cadena de texto y es requerido'
+            }
+          }
+        },
+        telefono: {
+          bsonType: 'number',
+          description: 'telefono al cual comunicarse es requerido y debe ser de  tipo number'
+        },
+        cargo: {
+          bsonType: 'string',
+          description: 'el cargo es obligatorio y de tipo string'
+
+        }
+
+      }
+    }
+  }
+})
+
+use('db_alquiler_campus')
+db.createCollection('reserva', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      title: 'reserva object validation',
+      required: ['fecha_reserva', 'fecha_inicio', 'fecha_fin', 'estado', 'id_cliente', 'id_automovil'],
+      properties: {
+        fecha_reserva: {
+          bsonType: 'date',
+          description: 'Fecha de reserva debe ser una fecha válida y es obligatoria'
+        },
+        fecha_inicio: {
+          bsonType: 'date',
+          description: 'Fecha de inicio debe ser una fecha válida y es obligatoria'
+        },
+        fecha_fin: {
+          bsonType: 'date',
+          description: 'Fecha de fin debe ser una fecha válida y es obligatoria'
+        },
+        estado: {
+          bsonType: 'string',
+          description: 'es obligatorio y debe ser string'
+        },
+        id_cliente: {
+          bsonType: 'objectId',
+          description: 'ID del cliente debe ser un ObjectId y es obligatorio'
+        },
+        id_automovil: {
+          bsonType: 'objectId',
+          description: 'ID del automóvil debe ser un ObjectId y es obligatorio'
+        }
+      }
+    }
+  }
+})
+
+use('db_alquiler_campus')
+db.createCollection('registro_devolucion', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'registro_devolucion object validation',
+      required: ['fecha_devolucion', 'combustible_devuelto', 'kilometraje_devuelto', 'id_alquiler', 'id_empleado'],
+      properties: {
+        fecha_devolucion: {
+          bsonType: 'date',
+          description: 'Fecha de devolucion debe ser una fecha válida y es obligatoria'
+        },
+        combustible_devuleto: {
+          bsonType: 'double',
+          description: 'el combustible devuelto es obligatorio y numero con punto flotante'
+        },
+        kilometraje_devuelto: {
+          bsonType: 'double',
+          description: 'el kilometraje devuelto es obligatorio y numero con punto flotante'
+        },
+        monto_adicional: {
+          bsonType: 'double',
+          description: 'el monto es numero con punto flotante'
+        },
+        id_alquiler: {
+          bsonType: 'objectId',
+          description: 'ID de la reserva debe ser un ObjectId y es obligatorio'
+        },
+        id_empleado: {
+          bsonType: 'objectId',
+          description: 'ID del empleado debe ser un ObjectId y es obligatorio'
+        }
+      }
+    }
+  }
+})
+
+use('db_alquiler_campus')
+db.createCollection('registro_entrega', {
+  validator: {
+    $jsonSchema: {
+      bsonType: 'object',
+      title: 'registro entrega object validation',
+      required: ['fecha_entrega', 'combustible_entregado', 'kilometraje_entregado', 'id_alquiler', 'id_empleado'],
+      properties: {
+        fecha_entrega: {
+          bsonType: 'date',
+          description: 'Fecha de entregado debe ser una fecha válida y es obligatoria'
+        },
+        combustible_entregado: {
+          bsonType: 'double',
+          description: 'el combustible entregado es obligatorio y numero con punto flotante'
+        },
+        kilometraje_entregado: {
+          bsonType: 'double',
+          description: 'el kilometraje entregado es obligatorio y numero con punto flotante'
+        },
+        id_alquiler: {
+          bsonType: 'objectId',
+          description: 'ID de la reserva debe ser un ObjectId y es obligatorio'
+        },
+        id_empleado: {
+          bsonType: 'objectId',
+          description: 'ID del empleado debe ser un ObjectId y es obligatorio'
+        }
+      }
+    }
+  }
+})
