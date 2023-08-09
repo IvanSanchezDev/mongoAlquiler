@@ -39,4 +39,35 @@ appAutomovil.get('/automovilesDisponibles', async (req, res) => {
   res.send(result)
 })
 
+// 7. Mostrar la cantidad total de automóviles disponibles en cada sucursal.
+
+appAutomovil.get('/automovilesDisponibles', async (req, res) => {
+  const sucursalAutomovil = db.collection('sucursal_automovil')
+  const result = await sucursalAutomovil.aggregate([
+    {
+      $group: {
+        _id: '$id_sucursal',
+        automovil: {
+          $push: '$$ROOT'
+        }
+      }
+    },
+    {
+      $addFields: {
+        cantidad_total: {
+          $sum: '$automovil.cantidad_disponible'
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        id_sucursal: { $toString: '$_id' },
+        cantidad_total: 1
+      }
+    }
+  ]).toArray()
+  res.send(result)
+})
+
 export default appAutomovil
