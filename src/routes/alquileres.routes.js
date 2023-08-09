@@ -134,4 +134,20 @@ appAlquileres.get('/detallesAlquiler/:_id', async (req, res) => {
   res.send(result)
 })
 
+// 8.Obtener el costo total de un alquiler específico.
+appAlquileres.get('/costoAlquiler/:_id', async (req, res) => {
+  const idAlquiler = req.params._id
+  const alquiler = db.collection('alquiler')
+
+  const result = await alquiler.findOne(
+    { _id: new ObjectId(idAlquiler) },
+    {
+      _id: 0,
+      automovil_id: { $toString: '$id_automovil' },
+      costo_total: 1
+    })
+  console.log(result)
+  res.send(result)
+})
+
 export default appAlquileres
