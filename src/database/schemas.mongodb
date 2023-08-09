@@ -59,11 +59,11 @@ db.createCollection('automovil', {
           description: 'el tipo es obligatorio para clasificarlos y de tipo string'
         },
         capacidad: {
-          bsonType: 'int',
+          bsonType: 'number',
           description: 'la capacidad es obligatoria y debe ser un entero'
         },
         precio_diario: {
-          bsonType: 'double',
+          bsonType: 'number',
           description: 'el precio diario es requerido para poder alquilarlo y de tipo number'
         }
 
@@ -81,7 +81,7 @@ db.createCollection('sucursal_automovil', {
       title: 'sucursal_automovil object validation',
       required: ['id_sucursal', 'id_automovil', 'cantidad_disponible'],
       properties: {
-        idSucursal: {
+        id_sucursal: {
           bsonType: 'objectId',
           description: 'ID de la sucursal debe ser un ObjectId y es obligatorio'
         },
@@ -90,7 +90,7 @@ db.createCollection('sucursal_automovil', {
           description: 'ID del automóvil debe ser un ObjectId y es obligatorio'
         },
         cantidad_disponible: {
-          bsonType: 'int',
+          bsonType: 'number',
           description: 'la cantidad disponible es obligatoria y de tipo entero'
         }
       }
@@ -164,7 +164,7 @@ db.createCollection('alquiler', {
           description: 'Fecha de fin debe ser una fecha válida y es obligatoria'
         },
         costo_total: {
-          bsonType: 'int',
+          bsonType: 'number',
           description: 'Costo total debe ser un número de punto flotante y es obligatorio'
         },
         estado: {
@@ -274,23 +274,24 @@ use('db_alquiler_campus')
 db.createCollection('registro_devolucion', {
   validator: {
     $jsonSchema: {
-      bsonType: 'registro_devolucion object validation',
+      bsonType: 'object',
+      title: 'registro_devolucion object validation',
       required: ['fecha_devolucion', 'combustible_devuelto', 'kilometraje_devuelto', 'id_alquiler', 'id_empleado'],
       properties: {
         fecha_devolucion: {
           bsonType: 'date',
           description: 'Fecha de devolucion debe ser una fecha válida y es obligatoria'
         },
-        combustible_devuleto: {
-          bsonType: 'double',
+        combustible_devuelto: {
+          bsonType: 'number',
           description: 'el combustible devuelto es obligatorio y numero con punto flotante'
         },
         kilometraje_devuelto: {
-          bsonType: 'double',
+          bsonType: 'number',
           description: 'el kilometraje devuelto es obligatorio y numero con punto flotante'
         },
         monto_adicional: {
-          bsonType: 'double',
+          bsonType: 'number',
           description: 'el monto es numero con punto flotante'
         },
         id_alquiler: {
@@ -319,11 +320,11 @@ db.createCollection('registro_entrega', {
           description: 'Fecha de entregado debe ser una fecha válida y es obligatoria'
         },
         combustible_entregado: {
-          bsonType: 'double',
+          bsonType: 'number',
           description: 'el combustible entregado es obligatorio y numero con punto flotante'
         },
         kilometraje_entregado: {
-          bsonType: 'double',
+          bsonType: 'number',
           description: 'el kilometraje entregado es obligatorio y numero con punto flotante'
         },
         id_alquiler: {
@@ -337,4 +338,103 @@ db.createCollection('registro_entrega', {
       }
     }
   }
+})
+
+use('db_alquiler_campus')
+db.sucursal.insertOne({
+  nombre: 'Zona Franca',
+  direccion: { calle: 'calle 29', ciudad: 'Bucaramanga' },
+  telefono: 322194
+})
+
+use('db_alquiler_campus')
+db.automovil.insertOne({
+  marca: 'Ferrari',
+  modelo: 'ddf',
+  anio: 2024,
+  tipo: 'automovil',
+  capacidad: 2,
+  precio_diario: 70000
+})
+
+use('db_alquiler_campus')
+const idSucursal = db.sucursal.findOne({ nombre: 'Zona Franca' })._id
+const idAutomovil = db.automovil.findOne({ marca: 'Ferrari' })._id
+
+db.sucursal_automovil.insertOne({
+  id_sucursal: idSucursal,
+  id_automovil: idAutomovil,
+  cantidad_disponible: 2
+})
+
+use('db_alquiler_campus')
+db.cliente.insertOne({
+  nombre: 'Ivan',
+  apellido: 'Dario',
+  dni: 100554231,
+  direccion: { calle: 'calle 29', ciudad: 'Bucaramanga' },
+  telefono: 310648975,
+  email: 'ivancampus@gmail.com'
+})
+
+use('db_alquiler_campus')
+const idCliente = db.cliente.findOne({ nombre: 'Ivan' })._id
+const idAutomovil2 = db.automovil.findOne({ marca: 'Ferrari' })._id
+
+db.alquiler.insertOne({
+  fecha_inicio: ISODate('2023-08-05T12:30:00'),
+  fecha_fin: ISODate('2023-08-20T12:30:00'),
+  costo_total: 1000000,
+  estado: 'Disponible',
+  id_cliente: idCliente,
+  id_automovil: idAutomovil2
+})
+
+
+use('db_alquiler_campus')
+db.empleado.insertOne({
+  nombre: 'Jairo',
+  apellido: 'sanchez',
+  dni: 3365841,
+  direccion: { calle: 'calle 29', ciudad: 'Bucaramanga' },
+  telefono: 31430409,
+  cargo: 'Vendedor'
+})
+
+use('db_alquiler_campus')
+const idCliente = db.cliente.findOne({ nombre: 'Ivan' })._id
+const idAutomovil2 = db.automovil.findOne({ marca: 'Ferrari' })._id
+
+db.reserva.insertOne({
+  fecha_reserva: ISODate('2023-07-31T12:30:00'),
+  fecha_inicio: ISODate('2023-08-05T12:30:00'),
+  fecha_fin: ISODate('2023-08-20T12:30:00'),
+  estado: 'Pendiente',
+  id_cliente: idCliente,
+  id_automovil: idAutomovil2
+})
+
+use('db_alquiler_campus')
+const idEmpleado = db.empleado.findOne({ nombre: 'Jairo' })._id
+const idAlquiler = db.alquiler.findOne({
+  fecha_inicio: ISODate('2023-08-05T12:30:00Z'),
+  fecha_fin: ISODate('2023-08-20T12:30:00Z')
+})._id
+
+
+db.registro_devolucion.insertOne({
+  fecha_devolucion: ISODate('2023-08-20T12:30:00Z'),
+  combustible_devuelto: 20000,
+  kilometraje_devuelto: 65000,
+  monto_adicional: 30000,
+  id_alquiler: idAlquiler,
+  id_empleado: idEmpleado
+})
+
+db.registro_entrega.insertOne({
+  fecha_entrega: ISODate('2023-08-20T12:30:00'),
+  combustible_entregado: 50000,
+  kilometraje_entregado: 55000,
+  id_alquiler: idAlquiler,
+  id_empleado: idEmpleado
 })
