@@ -70,4 +70,19 @@ appAutomovil.get('/automovilesDisponibles', async (req, res) => {
   res.send(result)
 })
 
+// 10. Mostrar todos los automóviles con una capacidad mayor a 5 personas
+appAutomovil.get('/automovilesCapacidad', async (req, res) => {
+  const automovil = db.collection('automovil')
+  const result = await automovil.find({ capacidad: { $gt: 5 } },
+    {
+      _id: 0,
+      id_automovil: { $toString: '$_id' },
+      marca: '$marca',
+      modelo: '$modelo',
+      capacidad: 1
+    }
+  ).toArray()
+  res.send(result)
+})
+
 export default appAutomovil
