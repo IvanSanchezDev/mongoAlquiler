@@ -1,7 +1,18 @@
 import express from 'express'
+import appCliente from './routes/clientes.routes.js'
+import appAlquileres from './routes/alquileres.routes.js'
+import appAutomovil from './routes/automoviles.routes.js'
+import appEmpleados from './routes/empleados.routes.js'
+import appReservas from './routes/reservas.routes.js'
 
 const app = express()
 app.use(express.json())
+
+app.use('/api/cliente', appCliente)
+app.use('/api/alquiler', appAlquileres)
+app.use('/api/automovil', appAutomovil)
+app.use('/api/empleado', appEmpleados)
+app.use('/api/reserva', appReservas)
 
 app.use((req, res) => {
   res.send('404 not found')
