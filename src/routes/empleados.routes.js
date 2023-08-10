@@ -21,4 +21,28 @@ appEmpleados.get('/empleadosVendedor', async (req, res) => {
   res.send(result)
 })
 
+// 13. Mostrar los empleados con cargo de "Gerente" o "Asistente".
+appEmpleados.get('/empleadosGerenteorAsistente', async (req, res) => {
+  const empleado = db.collection('empleado')
+  const result = await empleado.find({
+    $or: [
+      { cargo: 'Asistente' },
+      { cargo: 'Gerente' }
+    ]
+  },
+  {
+    _id: 0,
+    id_vendedor: '$_id',
+    nombre_completo: {
+      $concat: ['$nombre', ' ', '$apellido']
+    },
+    cargo: 1,
+    direccion: 1,
+    telefono: 1,
+    dni: 1
+  }).toArray()
+
+  res.send(result)
+})
+
 export default appEmpleados
