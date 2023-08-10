@@ -85,4 +85,26 @@ appAutomovil.get('/automovilesCapacidad', async (req, res) => {
   res.send(result)
 })
 
+// 15. Listar todos los automóviles ordenados por marca y modelo
+appAutomovil.get('/automovilesOrdenados', async (req, res) => {
+  const automovil = db.collection('automovil')
+  const result = await automovil.aggregate([
+    {
+      $sort: {
+        marca: -1
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        marca: '$marca',
+        modelo: '$modelo',
+        precio_diario: '$precio_diario',
+        capacidad: '$capacidad'
+      }
+    }
+  ]).toArray()
+  res.send(result)
+})
+
 export default appAutomovil
