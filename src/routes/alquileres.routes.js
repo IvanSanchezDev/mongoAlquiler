@@ -266,4 +266,97 @@ appAlquileres.get('/totalAlquileres', async (req, res) => {
   }
 })
 
+// 20. Listar los alquileres con fecha de inicio entre '2023-07-05' y '2023-07-10'.
+appAlquileres.get('/alquileres', async (req, res) => {
+  try {
+    const { fechaInicio, fechaFin } = req.query
+    const alquiler = db.collection('alquiler')
+    const result = await alquiler.aggregate([
+      {
+        $match: {
+          fecha_inicio: {
+            $gte: fechaInicio,
+            $lt: new Date(fechaFin + 24 * 60 * 60 * 1000)
+          }
+        }
+      },
+      {
+        $lookup: {
+          from: 'automovil',
+          localField: 'id_automovil',
+          foreignField: '_id',
+          as: 'automovil'
+        }
+      },
+      {
+        $lookup: {
+          from: 'cliente',
+          localField: 'id_cliente',
+          foreignField: '_id',
+          as: 'cliente'
+        }
+      },
+      {
+        $unwind: '$automovil'
+      },
+      {
+        $unwind: '$cliente'
+      },
+      {
+        $project: {
+          _id: 0,
+          id_alquiler: { $toString: '$_id' },
+          estado: 1,
+          fechas: {
+            fecha_inicio: {
+              $dateToString: {
+                format: '%Y-%m-%d',
+                date: '$fecha_inicio'
+              }
+            },
+            fecha_fin: {
+              $dateToString: {
+                format: '%Y-%m-%d',
+                date: '$fecha_fin'
+              }
+            }
+          },
+          id_automovil: { $toString: '$automovil._id' },
+          marca: '$automovil.marca',
+          modelo: '$automovil.modelo',
+          cliente_nombre: { $concat: ['$cliente.nombre', ' ', '$cliente.apellido'] },
+          id_cliente: { $toString: '$cliente._id' }
+        }
+      },
+      {
+        $group: {
+          _id: '$id_cliente',
+          alquileres: {
+            $push: {
+              id_alquiler: '$id_alquiler',
+              id_automovil: '$id_automovil',
+              fechas: '$fechas',
+              marca: '$marca',
+              modelo: '$modelo',
+              estado: '$estado'
+            }
+          },
+          cliente_nombre: { $first: '$cliente_nombre' }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          id_cliente: '$_id',
+          cliente_nombre: 1,
+          alquileres: 1
+        }
+      }
+    ]).toArray()
+    res.send(result)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})
+
 export default appAlquileres
