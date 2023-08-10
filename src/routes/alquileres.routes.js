@@ -266,6 +266,45 @@ appAlquileres.get('/totalAlquileres', async (req, res) => {
   }
 })
 
+// 18. Mostrar los automóviles con capacidad igual a 5 personas y que estén disponibles.
+appAlquileres.get('/automovilesCapacidadDisponibles', async (req, res) => {
+  try {
+    const alquiler = db.collection('alquiler')
+
+    const result = await alquiler.aggregate([
+      {
+        $lookup: {
+          from: 'automovil',
+          localField: 'id_automovil',
+          foreignField: '_id',
+          as: 'automovil'
+        }
+      },
+      {
+        $unwind: '$automovil'
+      },
+      {
+        $match: {
+          'automovil.capacidad': 5,
+          estado: 'Disponible'
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          id_automovil: { $toString: '$automovil._id' },
+          marca: '$automovil.marca',
+          modelo: '$automovil.modelo',
+          capacidad: '$automovil.capacidad'
+        }
+      }
+    ]).toArray()
+    res.send(result)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
+
 // 20. Listar los alquileres con fecha de inicio entre '2023-07-05' y '2023-07-10'.
 appAlquileres.get('/alquileres', async (req, res) => {
   try {
