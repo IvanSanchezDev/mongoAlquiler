@@ -241,4 +241,29 @@ appAlquileres.get('/detallesAlquiler', async (req, res) => {
   res.send(result)
 })
 
+// 17. Obtener la cantidad total de alquileres registrados en la base de datos.
+appAlquileres.get('/totalAlquileres', async (req, res) => {
+  try {
+    const alquiler = db.collection('alquiler')
+
+    const result = await alquiler.aggregate([
+      {
+        $group: {
+          _id: null,
+          total_alquiler: { $sum: 1 }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          total_alquiler: 1
+        }
+      }
+    ]).toArray()
+    res.send(result)
+  } catch (error) {
+    res.status(500).send(error)
+  }
+})
+
 export default appAlquileres
