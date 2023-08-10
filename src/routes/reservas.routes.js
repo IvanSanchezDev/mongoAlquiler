@@ -207,4 +207,57 @@ appReservas.get('/reservasPendientes/:idCliente', async (req, res) => {
   res.send(result)
 })
 
+// 19.Obtener los datos del cliente que realizó la reserva
+
+appReservas.get('/infoCliente', async (req, res) => {
+  const reserva = db.collection('reserva')
+  const result = await reserva.aggregate([
+    {
+      $lookup: {
+        from: 'cliente',
+        localField: 'id_cliente',
+        foreignField: '_id',
+        as: 'cliente'
+      }
+    },
+    {
+      $unwind: '$cliente'
+    },
+    {
+      $project: {
+        _id: 0,
+        cliente_nombre: { $concat: ['$cliente.nombre', ' ', '$cliente.apellido'] },
+        id_cliente: { $toString: '$cliente._id' },
+        email: '$cliente.email',
+        dni: '$cliente.dni',
+        telefone: '$cliente.telefono',
+        direccion: '$cliente.direccion'
+      }
+    },
+    {
+      $group: {
+        _id: '$id_cliente',
+        cliente_nombre: { $first: '$cliente_nombre' },
+        datos: {
+          $push: {
+            email: '$email',
+            dni: '$dni',
+            telefone: '$telefone',
+            direccion: '$direccion'
+          }
+        }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        id_cliente: '$_id',
+        cliente_nombre: 1,
+        datos: 1
+      }
+    }
+  ]).toArray()
+  res.send(result)
+})
+
 export default appReservas
