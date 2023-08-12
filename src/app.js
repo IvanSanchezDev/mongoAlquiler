@@ -10,6 +10,12 @@ import { appToken, appVerify } from './helpers/jwt.js'
 const app = express()
 app.use(express.json())
 
+app.use('/api/:collection', (req, res, next) => {
+  const collection = req.params.collection
+  req.collection = collection
+  next()
+})
+
 app.use('/api/cliente', appVerify, appCliente)
 app.use('/api/alquiler', appVerify, appAlquileres)
 app.use('/api/automovil', appVerify, appAutomovil)
