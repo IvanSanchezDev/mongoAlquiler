@@ -8,14 +8,17 @@ const middlewareVerify = Router()
 const DTOData = Router()
 
 middlewareVerify.use((req, res, next) => {
-  if (!req.rateLimit) return
-  const { direccion_cliente } = req.data // payload es el codigo jwt almacenado en req.data
-  // const { exp, ...newPayload } = payload// desestructuracion del codigo jwt
-  // payload = newPayload // extraemos solo la info
-  const Clone = JSON.stringify(classToPlain(plainToClass(DTO('cliente').class, {}, { ignoreDecorators: true })))// traemos la clase para comparar
-  const Verify = Clone === JSON.stringify(direccion_cliente) // comparamos que las clases sean iguales
-  req.data = undefined; // limpiamos req.data
-  (!Verify) ? res.status(406).send({ status: 406, message: 'No Autorizado' }) : next()
+  try {
+    const collection = req.collection
+    const { iat, exp, ...newPayload } = req.data // newPayload es la data  almacenado en req.data
+    const payload = newPayload // extraemos solo la info
+    const clone = JSON.stringify(classToPlain(plainToClass(DTO(collection).class, {}, { ignoreDecorators: true })))// traemos el objeto convertido de la clase para comparar
+    const Verify = clone === JSON.stringify(payload) // comparamos que los objetos sean iguales
+    req.data = undefined; // limpiamos req.data
+    (!Verify) ? res.status(406).send({ status: 406, message: 'No Autorizado' }) : next()
+  } catch (error) {
+    res.status(400).json({ status: 400, message: error.message })
+  }
 })
 
 DTOData.use(async (req, res, next) => {

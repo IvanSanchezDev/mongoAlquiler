@@ -14,7 +14,7 @@ appCliente.get('/clientes', limitConfig(), middlewareVerify, async (req, res) =>
 })
 
 // 9. Listar los clientes con el DNI específico.
-appCliente.get('/cliente/:dni', async (req, res) => {
+appCliente.get('/cliente/:dni', limitConfig(), middlewareVerify, async (req, res) => {
   const dniCliente = req.params.dni
   const cliente = db.collection('cliente')
   const result = await cliente.findOne({ dni: parseInt(dniCliente) })
@@ -24,7 +24,7 @@ appCliente.get('/cliente/:dni', async (req, res) => {
 
 // 14.Obtener los datos de los clientes que realizaron al menos un alquiler.
 
-appCliente.get('/clientesAlMenosUnAlquiler', async (req, res) => {
+appCliente.get('/clientesAlMenosUnAlquiler', limitConfig(), middlewareVerify, async (req, res) => {
   const alquiler = db.collection('alquiler')
   const result = await alquiler.aggregate([
     {

@@ -2,6 +2,11 @@ import 'reflect-metadata'
 import { plainToClass, classToPlain } from 'class-transformer'
 import { Alquiler } from '../dto/alquiler.js'
 import { Cliente } from '../dto/cliente.js'
+import { Automovil } from '../dto/automovil.js'
+import { Empleado } from '../dto/empleado.js'
+import { Reserva } from '../dto/reserva.js'
+import { SucursalAutomovil } from '../dto/sucursalAutomovil.js'
+
 import jwt from 'jsonwebtoken'
 import dotenv from 'dotenv'
 import { Router } from 'express'
@@ -13,10 +18,16 @@ const appVerify = Router()
 const DTO = (p1) => {
   const match = {
     alquiler: Alquiler,
-    cliente: Cliente
+    cliente: Cliente,
+    automovil: Automovil,
+    empleado: Empleado,
+    reserva: Reserva,
+    sucursalAutomovil: SucursalAutomovil
   }
   const inst = match[p1]
-  if (!inst) throw new { status: 404, message: 'Token solicitado no valido' }()
+  if (!inst) {
+    throw new Error('Colección no válida')
+  }
   return { atributos: plainToClass(inst, {}, { ignoreDecorators: true }), class: inst }
 }
 

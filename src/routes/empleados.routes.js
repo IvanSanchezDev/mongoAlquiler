@@ -1,11 +1,13 @@
 import { con } from '../database/connection.js'
 import { Router } from 'express'
+import { middlewareVerify } from '../middleware/campus.js'
+import { limitConfig } from '../helpers/limit.js'
 
 const appEmpleados = Router()
 const db = await con()
 
 // 6.Listar los empleados con el cargo de "Vendedor".
-appEmpleados.get('/empleadosVendedor', async (req, res) => {
+appEmpleados.get('/empleadosVendedor', limitConfig(), middlewareVerify, async (req, res) => {
   const empleado = db.collection('empleado')
   const result = await empleado.find({ cargo: { $eq: 'Vendedor' } }, {
     _id: 0,
@@ -22,7 +24,7 @@ appEmpleados.get('/empleadosVendedor', async (req, res) => {
 })
 
 // 13. Mostrar los empleados con cargo de "Gerente" o "Asistente".
-appEmpleados.get('/empleadosGerenteorAsistente', async (req, res) => {
+appEmpleados.get('/empleadosGerenteorAsistente', limitConfig(), middlewareVerify, async (req, res) => {
   const empleado = db.collection('empleado')
   const result = await empleado.find({
     $or: [

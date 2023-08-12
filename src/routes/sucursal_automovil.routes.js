@@ -1,12 +1,14 @@
 import { con } from '../database/connection.js'
 import { Router } from 'express'
+import { middlewareVerify } from '../middleware/campus.js'
+import { limitConfig } from '../helpers/limit.js'
 
 const appSucursalAutomovil = Router()
 const db = await con()
 
 // 16. Mostrar la cantidad total de automóviles en cada sucursal junto con su dirección
 
-appSucursalAutomovil.get('/totalAutomoviles', async (req, res) => {
+appSucursalAutomovil.get('/totalAutomoviles', limitConfig(), middlewareVerify, async (req, res) => {
   try {
     const sucursalAutomovil = db.collection('sucursal_automovil')
     const result = sucursalAutomovil.aggregate([

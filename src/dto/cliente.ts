@@ -37,6 +37,8 @@ export class Cliente {
 
     constructor(data: Partial<Cliente>) {
         Object.assign(this, data);
+        this.nombre="Cliente nuevo";
+        this.dni=100;
         this.direccion = { calle: '', ciudad: '' };
     }
 }

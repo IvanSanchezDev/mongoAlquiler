@@ -1,12 +1,14 @@
 import { con } from '../database/connection.js'
 import { Router } from 'express'
 import { ObjectId } from 'mongodb'
+import { middlewareVerify } from '../middleware/campus.js'
+import { limitConfig } from '../helpers/limit.js'
 
 const appReservas = Router()
 const db = await con()
 
 // 4. Mostrar todas las reservas pendientes con los datos del cliente y el automóvil reservado.
-appReservas.get('/reservasPendientes', async (req, res) => {
+appReservas.get('/reservasPendientes', limitConfig(), middlewareVerify, async (req, res) => {
   const reserva = db.collection('reserva')
   const result = await reserva.aggregate([
     {
@@ -106,7 +108,7 @@ appReservas.get('/reservasPendientes', async (req, res) => {
 })
 
 // 12. Listar las reservas pendientes realizadas por un cliente específico.
-appReservas.get('/reservasPendientes/:idCliente', async (req, res) => {
+appReservas.get('/reservasPendientes/:idCliente', limitConfig(), middlewareVerify, async (req, res) => {
   const idCliente = req.params.idCliente
   console.log(idCliente)
   const reserva = db.collection('reserva')
@@ -209,7 +211,7 @@ appReservas.get('/reservasPendientes/:idCliente', async (req, res) => {
 
 // 19.Obtener los datos del cliente que realizó la reserva
 
-appReservas.get('/infoCliente', async (req, res) => {
+appReservas.get('/infoCliente', limitConfig(), middlewareVerify, async (req, res) => {
   const reserva = db.collection('reserva')
   const result = await reserva.aggregate([
     {

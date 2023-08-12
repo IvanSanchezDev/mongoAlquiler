@@ -1,12 +1,14 @@
 import { con } from '../database/connection.js'
 import { Router } from 'express'
 import { ObjectId } from 'mongodb'
+import { middlewareVerify } from '../middleware/campus.js'
+import { limitConfig } from '../helpers/limit.js'
 
 const appAlquileres = Router()
 const db = await con()
 
 // 3. Listar todos los alquileres activos junto con los datos de los clientes relacionados.
-appAlquileres.get('/alquileresActivos', async (req, res) => {
+appAlquileres.get('/alquileresActivos', limitConfig(), middlewareVerify, async (req, res) => {
   const cliente = db.collection('cliente')
   const result = await cliente.aggregate([
     {
@@ -48,7 +50,7 @@ appAlquileres.get('/alquileresActivos', async (req, res) => {
 })
 
 // 5. Obtener los detalles del alquiler con el ID_Alquiler específico.
-appAlquileres.get('/detallesAlquiler/:_id', async (req, res) => {
+appAlquileres.get('/detallesAlquiler/:_id', limitConfig(), middlewareVerify, async (req, res) => {
   const { _id } = req.params
   const idAlquiler = _id
   const alquiler = db.collection('alquiler')
@@ -135,7 +137,7 @@ appAlquileres.get('/detallesAlquiler/:_id', async (req, res) => {
 })
 
 // 8.Obtener el costo total de un alquiler específico.
-appAlquileres.get('/costoAlquiler/:_id', async (req, res) => {
+appAlquileres.get('/costoAlquiler/:_id', limitConfig(), middlewareVerify, async (req, res) => {
   const idAlquiler = req.params._id
   const alquiler = db.collection('alquiler')
 
@@ -151,7 +153,7 @@ appAlquileres.get('/costoAlquiler/:_id', async (req, res) => {
 })
 
 // 11. Obtener los detalles del alquiler que tiene fecha de inicio en '2023-07-05'.
-appAlquileres.get('/detallesAlquiler', async (req, res) => {
+appAlquileres.get('/detallesAlquiler', limitConfig(), middlewareVerify, async (req, res) => {
   const fecha = req.query.fecha
   console.log(fecha)
   const alquiler = db.collection('alquiler')
@@ -242,7 +244,7 @@ appAlquileres.get('/detallesAlquiler', async (req, res) => {
 })
 
 // 17. Obtener la cantidad total de alquileres registrados en la base de datos.
-appAlquileres.get('/totalAlquileres', async (req, res) => {
+appAlquileres.get('/totalAlquileres', limitConfig(), middlewareVerify, async (req, res) => {
   try {
     const alquiler = db.collection('alquiler')
 
@@ -267,7 +269,7 @@ appAlquileres.get('/totalAlquileres', async (req, res) => {
 })
 
 // 18. Mostrar los automóviles con capacidad igual a 5 personas y que estén disponibles.
-appAlquileres.get('/automovilesCapacidadDisponibles', async (req, res) => {
+appAlquileres.get('/automovilesCapacidadDisponibles', limitConfig(), middlewareVerify, async (req, res) => {
   try {
     const alquiler = db.collection('alquiler')
 
@@ -306,7 +308,7 @@ appAlquileres.get('/automovilesCapacidadDisponibles', async (req, res) => {
 })
 
 // 20. Listar los alquileres con fecha de inicio entre '2023-07-05' y '2023-07-10'.
-appAlquileres.get('/alquileres', async (req, res) => {
+appAlquileres.get('/alquileres', limitConfig(), middlewareVerify, async (req, res) => {
   try {
     const { fechaInicio, fechaFin } = req.query
     const alquiler = db.collection('alquiler')

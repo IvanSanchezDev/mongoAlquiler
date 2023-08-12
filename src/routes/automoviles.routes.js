@@ -1,11 +1,14 @@
 import { con } from '../database/connection.js'
 import { Router } from 'express'
+import { middlewareVerify } from '../middleware/campus.js'
+
+import { limitConfig } from '../helpers/limit.js'
 
 const appAutomovil = Router()
 const db = await con()
 
 // 2. Obtener todos los automóviles disponibles para alquiler.
-appAutomovil.get('/automovilesDisponibles', async (req, res) => {
+appAutomovil.get('/automovilesDisponibles', limitConfig(), middlewareVerify, async (req, res) => {
   const alquiler = db.collection('alquiler')
   const result = await alquiler.aggregate([
     {
@@ -41,7 +44,7 @@ appAutomovil.get('/automovilesDisponibles', async (req, res) => {
 
 // 7. Mostrar la cantidad total de automóviles disponibles en cada sucursal.
 
-appAutomovil.get('/automovilesDisponibles', async (req, res) => {
+appAutomovil.get('/automovilesDisponibles', limitConfig(), middlewareVerify, async (req, res) => {
   const sucursalAutomovil = db.collection('sucursal_automovil')
   const result = await sucursalAutomovil.aggregate([
     {
@@ -71,7 +74,7 @@ appAutomovil.get('/automovilesDisponibles', async (req, res) => {
 })
 
 // 10. Mostrar todos los automóviles con una capacidad mayor a 5 personas
-appAutomovil.get('/automovilesCapacidad', async (req, res) => {
+appAutomovil.get('/automovilesCapacidad', limitConfig(), middlewareVerify, async (req, res) => {
   const automovil = db.collection('automovil')
   const result = await automovil.find({ capacidad: { $gt: 5 } },
     {
@@ -86,7 +89,7 @@ appAutomovil.get('/automovilesCapacidad', async (req, res) => {
 })
 
 // 15. Listar todos los automóviles ordenados por marca y modelo
-appAutomovil.get('/automovilesOrdenados', async (req, res) => {
+appAutomovil.get('/automovilesOrdenados', limitConfig(), middlewareVerify, async (req, res) => {
   const automovil = db.collection('automovil')
   const result = await automovil.aggregate([
     {
